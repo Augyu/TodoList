@@ -5,22 +5,28 @@ import {
   View,
   TextInput,
   Button,
-  TouchableOpacity
+  TouchableOpacity,
+  StatusBarIOS
 } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
+import { CheckBox } from 'react-native-elements'
 import { default as UUID } from 'uuid'
 import TodoItem from '../../constants/TodoItem'
+import Status from '../../constants/Status'
 
 export default function List() {
   const [inputText, setInputText] = useState('')
   const [todoList, setTodoList] = useState([
-    { key: UUID.v4(), title: '買咖啡' },
-    { key: UUID.v4(), title: '買牛奶' }
+    { key: UUID.v4(), title: '買咖啡', status: Status.Active },
+    { key: UUID.v4(), title: '買牛奶', status: Status.Active }
   ])
 
   const addItemToArray = () => {
     if (inputText === '') return
-    const newItem = [...todoList, { key: UUID.v4(), title: inputText }]
+    const newItem = [
+      ...todoList,
+      { key: UUID.v4(), title: inputText, status: Status.Active }
+    ]
     setInputText('')
     setTodoList(newItem)
   }
@@ -32,6 +38,45 @@ export default function List() {
     oldArray.splice(prevIndex, 1)
     setTodoList(oldArray)
   }
+
+  const handleStatusChange = (item) => {
+    let oldArray = [...todoList]
+    const prevIndex = oldArray.findIndex((_) => _.key === item.key)
+    oldArray[prevIndex].status =
+      oldArray[prevIndex].status === Status.Complete
+        ? Status.Active
+        : Status.Complete
+    setTodoList(oldArray)
+  }
+
+  const handleCheck = (item) => {
+    return item.status === Status.Complete ? true : false
+  }
+
+  const renderItem = ({ item }) => (
+    <View style={styles.rowFront}>
+      <CheckBox
+        checked={handleCheck(item)}
+        onPress={() => handleStatusChange(item)}
+        title={item.title}
+      />
+    </View>
+  )
+
+  const renderHiddenItem = (data, rowMap) => (
+    <View style={styles.rowBack}>
+      <TouchableOpacity
+        style={styles.backRightBtn}
+        onPress={() => handleRemoveItem(rowMap, data.item.key)}>
+        <Text style={styles.backTextWhite}>刪除</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.backRightBtn}
+        onPress={() => handleRemoveItem(rowMap, data.item.key)}>
+        <Text style={styles.backTextWhite}>刪除</Text>
+      </TouchableOpacity>
+    </View>
+  )
 
   return (
     <View style={styles.container}>
@@ -48,25 +93,8 @@ export default function List() {
         data={todoList}
         leftOpenValue={75}
         rightOpenValue={-75}
-        renderHiddenItem={(data, rowMap) => (
-          <View style={styles.rowBack}>
-            <TouchableOpacity
-              style={styles.backRightBtn}
-              onPress={() => handleRemoveItem(rowMap, data.item.key)}>
-              <Text style={styles.backTextWhite}>刪除</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.backRightBtn}
-              onPress={() => handleRemoveItem(rowMap, data.item.key)}>
-              <Text style={styles.backTextWhite}>刪除</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        renderItem={({ item }) => (
-          <View style={styles.rowFront}>
-            <Text style={styles.item}>{item.title}</Text>
-          </View>
-        )}></SwipeListView>
+        renderHiddenItem={renderHiddenItem}
+        renderItem={renderItem}></SwipeListView>
     </View>
   )
 }
