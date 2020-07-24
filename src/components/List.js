@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity} from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  TouchableOpacity,
+  StatusBarIOS
+} from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
-import {default as UUID} from "uuid"
+import { CheckBox } from 'react-native-elements'
+import { default as UUID } from 'uuid'
 import TodoItem from '../../constants/TodoItem'
+import Status from '../../constants/Status'
+
 import * as firebase from 'firebase'
 import { firebaseConfig } from '../config/config'
 
@@ -13,18 +24,22 @@ export default function List() {
   const [inputText, setInputText] = useState('')
   const [todoList, setTodoList] = useState([])
 
+
   /*
   const addItemToArray = () => {
     if (inputText === '') return
-    const newItem = [...todoList, { key:UUID.v4(),title: inputText }]
+    const newItem = [
+      ...todoList,
+      { key: UUID.v4(), title: inputText, status: Status.Active }
+    ]
     setInputText('')
     setTodoList(newItem)
   }
 
-  const handleRemoveItem = (rowMap,rowKey) => {
+  const handleRemoveItem = (rowMap, rowKey) => {
     rowMap[rowKey].closeRow()
     const oldArray = [...todoList]
-    const prevIndex = oldArray.findIndex(item => item.key === rowKey)
+    const prevIndex = oldArray.findIndex((item) => item.key === rowKey)
     oldArray.splice(prevIndex, 1)
     setTodoList(oldArray)
   }
@@ -73,6 +88,45 @@ export default function List() {
     })
   }
 
+  const handleStatusChange = (item) => {
+    let oldArray = [...todoList]
+    const prevIndex = oldArray.findIndex((_) => _.key === item.key)
+    oldArray[prevIndex].status =
+      oldArray[prevIndex].status === Status.Complete
+        ? Status.Active
+        : Status.Complete
+    setTodoList(oldArray)
+  }
+
+  const handleCheck = (item) => {
+    return item.status === Status.Complete ? true : false
+  }
+
+  const renderItem = ({ item }) => (
+    <View style={styles.rowFront}>
+      <CheckBox
+        checked={handleCheck(item)}
+        onPress={() => handleStatusChange(item)}
+        title={item.title}
+      />
+    </View>
+  )
+
+  const renderHiddenItem = (data, rowMap) => (
+    <View style={styles.rowBack}>
+      <TouchableOpacity
+        style={styles.backRightBtn}
+        onPress={() => handleRemoveItem(rowMap, data.item.key)}>
+        <Text style={styles.backTextWhite}>刪除</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.backRightBtn}
+        onPress={() => handleRemoveItem(rowMap, data.item.key)}>
+        <Text style={styles.backTextWhite}>刪除</Text>
+      </TouchableOpacity>
+    </View>
+  )
+
   return (
     <View style={styles.container}>
       <Text style={styles.TopTitle}>TO DO LIST</Text>
@@ -115,18 +169,18 @@ export default function List() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   TopTitle: {
-    fontSize: 32,
+    fontSize: 32
   },
   Textbox: {
     fontSize: 16,
-    height: 32,
+    height: 32
   },
   item: {
     paddingTop: 8,
-    fontSize: 16,
+    fontSize: 16
   },
   rowFront: {
     alignItems: 'center',
@@ -134,23 +188,23 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     borderBottomWidth: 1,
     justifyContent: 'center',
-    height: 50,
+    height: 50
   },
   rowBack: {
     alignItems: 'center',
     backgroundColor: '#DDD',
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   backBtn: {
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
     width: 75,
-    height:50,
+    height: 50
   },
   backTextWhite: {
-    color: '#FFF',
-  },
+    color: '#FFF'
+  }
 })

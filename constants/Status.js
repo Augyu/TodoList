@@ -1,1 +1,3 @@
-export default Status = { 1: 'Active', 2: 'Complete' }
+const Status = { Active: 1, Complete: 2 }
+
+export default Status
