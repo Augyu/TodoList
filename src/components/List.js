@@ -3,14 +3,17 @@ import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity} from 'reac
 import { SwipeListView } from 'react-native-swipe-list-view'
 import {default as UUID} from "uuid"
 import TodoItem from '../../constants/TodoItem'
+import * as firebase from 'firebase'
+import { firebaseConfig } from '../config/config'
+
+const app = firebase.initializeApp(firebaseConfig)
+const db = app.database()
 
 export default function List() {
   const [inputText, setInputText] = useState('')
-  const [todoList, setTodoList] = useState([
-    { key:UUID.v4() ,title: '買咖啡' },
-    { key:UUID.v4() ,title: '買牛奶' },
-  ])
+  const [todoList, setTodoList] = useState([])
 
+  /*
   const addItemToArray = () => {
     if (inputText === '') return
     const newItem = [...todoList, { key:UUID.v4(),title: inputText }]
@@ -25,6 +28,50 @@ export default function List() {
     oldArray.splice(prevIndex, 1)
     setTodoList(oldArray)
   }
+  */
+
+  const addItemToDB = (input) =>{
+    if (input === '') return
+    const itemId = UUID.v4()
+    db.ref('/'+itemId).set({
+    title: input
+    })
+    setInputText('')
+  }
+/*
+  const getDBitem = () =>{
+    setTodoList([])
+    initData()
+    db.ref('/').on('value',(snapshot) => {
+    snapshot.forEach((child)=>{
+        const newItem = [...todoList, { key:child.key,title: child.child('title').val() }]
+        setTodoList(newItem)
+        console.log(newItem)
+    })
+    })
+    console.log(todoList)
+    return todoList
+  }
+*/
+  const getDBitem = () =>{
+    initData()
+    db.ref('/').once('value',(snapshot) => {
+    snapshot.forEach((child)=>{
+        const newItem = [...todoList, { key:child.key,title: child.child("title").val() }]
+        setTodoList(newItem)
+    })
+    })
+    return todoList
+  }
+  //初始值(判斷若DB為空)
+  const initData = () =>{
+    db.ref('/').on('value',(snapshot) => {
+    if ( snapshot.val() === null ){
+        addItemToDB('買咖啡')
+        addItemToDB('買牛奶')
+    }
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -35,7 +82,7 @@ export default function List() {
         onChangeText={(text) => setInputText(text)}
         value={inputText}
       />
-      <Button title="新增" onPress={() => addItemToArray()} />
+      <Button title="新增" onPress={() =>getDBitem()} />
       <SwipeListView
         useFlatList
         data={todoList}
@@ -43,11 +90,11 @@ export default function List() {
         rightOpenValue={-75}
         renderHiddenItem={ (data,rowMap) => (
           <View style={styles.rowBack}>
-          <TouchableOpacity style={styles.backRightBtn}
-            onPress = {()=>handleRemoveItem(rowMap,data.item.key)} >
+          <TouchableOpacity style={styles.backBtn}
+            onPress = {()=>storeHighScore(data.item.key,data.item.title)} >
             <Text style={styles.backTextWhite}>刪除</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.backRightBtn}
+          <TouchableOpacity style={styles.backBtn}
             onPress = {()=>handleRemoveItem(rowMap,data.item.key)} >
             <Text style={styles.backTextWhite}>刪除</Text>
           </TouchableOpacity>
@@ -63,6 +110,7 @@ export default function List() {
     </View>
   )
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -95,7 +143,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  backRightBtn: {
+  backBtn: {
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',

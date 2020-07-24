@@ -1,5 +1,5 @@
 Arguments: 
-  E:\888_GameOrOtherApplicationSetUp\React Native\Node.js\node.exe C:\Users\SUZY\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add expo
+  E:\888_GameOrOtherApplicationSetUp\React Native\Node.js\node.exe C:\Users\SUZY\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add firebase@7.9.0
 
 PATH: 
   E:\888_GameOrOtherApplicationSetUp\React Native\Node.js;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;"C:\Windows\System32\WindowsPowerShell\v1.0\;D:\Java\jdk-11\bin";C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;D:\Java\jdk-11\bin;E:\888_GameOrOtherApplicationSetUp\React Native\Node.js\;E:\888_GameOrOtherApplicationSetUp\Git\Git\cmd;E:\888_GameOrOtherApplicationSetUp\PowerShell\7-preview\preview;C:\Users\SUZY\AppData\Local\Microsoft\WindowsApps;C:\Users\SUZY\AppData\Roaming\npm;C:\Users\SUZY\AppData\Local\GitHubDesktop\bin;E:\888_GameOrOtherApplicationSetUp\Microsoft VS Code\bin
@@ -14,7 +14,8 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: EPERM: operation not permitted, unlink 'C:\Users\SUZY\Documents\GitHub\TodoList\node_modules\@babel\compat-data\node_modules\.bin'
+  Error: https://registry.npm.taobao.org/grpc/download/grpc-1.24.2.tgz: unexpected end of file
+      at Zlib.zlibOnError [as onerror] (zlib.js:183:17)
 
 npm manifest: 
   {
@@ -32,6 +33,7 @@ npm manifest:
       "react": "~16.11.0",
       "react-dom": "~16.11.0",
       "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
+      "react-native-swipe-list-view": "^3.1.3",
       "react-native-web": "~0.11.7"
     },
     "devDependencies": {
@@ -4547,6 +4549,11 @@ Lockfile:
     version "3.0.7"
     resolved "https://registry.npm.taobao.org/react-native-safe-area-context/download/react-native-safe-area-context-3.0.7.tgz#0f53de7a30d626d82936000f3f6db374ecc4b800"
     integrity sha1-D1PeejDWJtgpNgAPP22zdOzEuAA=
+  
+  react-native-swipe-list-view@^3.1.3:
+    version "3.1.3"
+    resolved "https://registry.npm.taobao.org/react-native-swipe-list-view/download/react-native-swipe-list-view-3.1.3.tgz#b57b079ddc7eae4a12f3f209c49c49d8886c424e"
+    integrity sha1-tXsHndx+rkoS8/IJxJxJ2IhsQk4=
   
   react-native-web@~0.11.7:
     version "0.11.7"
